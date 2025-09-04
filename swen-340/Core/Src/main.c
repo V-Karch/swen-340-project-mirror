@@ -8,7 +8,6 @@
 #include "LED.h"
 #include "UART.h"
 #include "demo.h"
-
 	
 int main(void){
 
@@ -18,6 +17,8 @@ int main(void){
 	UART2_Init();
 	
 	// application run function
-	run_demo() ;
+	hello();
+	// run_demo() ;
 }
 
+// COMMENT FOR TESTING BETWEEN IDES
