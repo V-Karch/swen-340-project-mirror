@@ -1,0 +1,31 @@
+chunk type: 0x4d,0x54,0x68,0x64
+
+0x4d = "M"
+0x54 = "T"
+0x68 = "h"
+0x64 = "d"
+
+length: 0x00,0x00,0x00,0x06
+
+0x06 = 6 (always six for some reason)
+
+format: 0x00,0x01
+
+0x01 = 1
+
+/*
+0-the file contains a single multi-channel track
+1-the file contains one or more simultaneous tracks (or MIDI outputs) of a sequence
+2-the file contains one or more sequentially independent single-track patterns
+*/
+
+ntrks (number of tracks): 0x00,0x02
+
+0x02 = 2 (2 tracks)
+
+The next word, <ntrks>, is the number of track chunks in the file. It will always be 1 for a format 0 file.
+
+division: 0x01,0x00
+
+0x0100 = 256
+
