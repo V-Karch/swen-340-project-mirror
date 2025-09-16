@@ -18,8 +18,9 @@ int main(void){
 	UART2_Init();
 	
 	// application run function
-	printf("Hello World!\r\n");
+	// printf("Hello World!\r\n");
 	// run_demo() ;
+	run_activity_4();
 }
 
 // COMMENT FOR TESTING BETWEEN IDES
