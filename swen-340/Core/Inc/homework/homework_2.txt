@@ -1,0 +1,79 @@
+SWEN-340: Data Representation - Homework 2
+
+
+Instructions:
+    1. Assume all values are stored in the smallest variable size necessary for
+       the value to fit. 
+       (I.E. 8 bit values are stored in a char and 16 bit values are stored in a short).
+       (Signed value uses 2's complement format).
+    2. Provide hexadecimal values in 0x... format (C language format)
+    3. Edit this text file and record your answer.
+    4. Also for every answer show the manual steps required to arrive at you answer by editing this text file.
+    5. Submit your edited text file to the MyCourses assignment folder "Homework 1".
+       All submissions MUST be text files.
+    6. All questions are worth one point
+
+
+Questions:
+    1. Convert decimal 95 to hexadecimal.
+       Answer: 0x5F 
+       Reasoning: 
+	95 / 16 = 5 R 15
+	5 groups of 16, 15 groups of 1, 15 = F in hex
+           
+    2. Convert 0x1CD to unsigned decimal. (Hint: Convert it to binary first!)
+       Answer:  461
+       Reasoning:
+	0x1CD = D(13) * 1 + C(12) * 16 + 1 * 16 * 15
+	13 + 192 + 256 = 461 in decimal
+	
+       
+    3. What is the value of binary 10101011 in decimal if this is a negative number?
+	   Decimal Answer: -85  
+	   Reasoning: 
+	    sign bit is 1 at the start so it is negative
+            inverting bits gives 01010100
+            plus one gives 01010101
+	    1 * 1 + 0 * 2 + 1 * 4 + 0 * 8 + 1 * 16 + 64 = 85, signed = -85
+	   
+    4. What is the value of binary 111001111 in decimal if this is an unsigned number?
+       Decimal Answer: 463
+       Reasoning:
+	111001111 -> 1 * 1 + 1 * 2 + 1 * 4 + 1 * 8 + 0 * 16 + 0 * 32 + 1 * 64 + 1 * 128 + 1 * 256 = 463
+
+	 
+	   
+    5. Add 0x8BCD and 0x02E6 (assume unsigned numbers):
+       Hexadecimal Answer: 0x8EB3
+       Reasoning: 
+	0x8BCD = 8 * 16 * 16 * 16 + 11 * 16 * 16 + 12 * 16 + 13 = 35789
+	0x02E6 = 2 * 16 * 16 + 14 * 16 + 6 = 742
+	35789 + 742 = 36531
+	36531 / 16 = 2283 R 3
+	2283 / 16 = 142 R 11 (B)
+	142 / 16 = 8 R 14 (E)
+	8 / 16 = 0 R 8
+	0x8EB3
+	   
+    6. Add 8 bit binary integers 10101111 and 11011011
+       Hexadecimal Answer: 0x8A
+       Reasoning: 
+	10101111 = 128 + 32 + 8 + 4 + 2 + 1 = 175
+	11011011 = 128 + 64 + 16 + 8 + 2 + 1 = 219
+	175 + 219 = 394
+	256 is biggest value that can fit in 8 bits
+	so it has to wrap around I think
+	394 - 256 = 138
+	138 / 16 = 8 R 8
+	10 / 16 = 0 R 10 (A)
+	0x8A
+	
+	   
+    7.	How many bits are in each of the following data types?
+		
+		a. Byte			Answer: 8
+		b. Short 		Answer: 16
+		c. Int      		Answer: 32
+		d. Long    		Answer: 32
+		e. Nibble		Answer: 4
+
