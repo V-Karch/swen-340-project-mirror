@@ -11,5 +11,5 @@ uint16_t convert_to_uint16(uint8_t* byte_0) {
 }
 
 uint32_t convert_to_uint32(uint8_t* byte_0) {
-	// IMPLEMENT
+	return ((*byte_0 << 24) + (byte_0[1] << 16) + (byte_0[2] << 8) + (byte_0[3]));
 }
