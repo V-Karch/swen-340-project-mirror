@@ -16,9 +16,6 @@ int main(void){
 	LED_Init();
 	UART2_Init();
 	// run_activity_4();
-	while (1) {
-		read_and_print_character();
-	}
-}
-
+	run_activity_6();
 // COMMENT FOR TESTING BETWEEN IDES
+}
