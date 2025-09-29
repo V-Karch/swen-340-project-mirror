@@ -15,7 +15,10 @@ int main(void){
 	System_Clock_Init(); // set System Clock = 80 MHz
 	LED_Init();
 	UART2_Init();
-	run_activity_4();
+	// run_activity_4();
+	while (1) {
+		read_and_print_character();
+	}
 }
 
 // COMMENT FOR TESTING BETWEEN IDES

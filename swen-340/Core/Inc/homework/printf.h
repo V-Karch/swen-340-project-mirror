@@ -10,5 +10,6 @@
 
 int printf (const char* format, ...);
 int puts (const char* string);
+int putchar(int c);
 
 #endif /* INC_HOMEWORK_PRINTF_H_ */

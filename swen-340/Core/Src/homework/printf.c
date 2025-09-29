@@ -20,7 +20,12 @@ int puts (const char* string) {
     return ret + 1;
 }
 
-int printf (const char* format, ...) {
+int putchar(int c) {
+	USART_Write(USART2, (unsigned char*)&c, 1);
+	return 1;
+}
+
+int printf(const char* format, ...) {
    va_list aptr;
    int ret;
 
