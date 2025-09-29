@@ -11,15 +11,10 @@
 #include "printf.h"
 	
 int main(void){
-
 	// initialization code
 	System_Clock_Init(); // set System Clock = 80 MHz
 	LED_Init();
 	UART2_Init();
-	
-	// application run function
-	// printf("Hello World!\r\n");
-	// run_demo() ;
 	run_activity_4();
 }
 

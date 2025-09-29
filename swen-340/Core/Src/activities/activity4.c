@@ -2,6 +2,7 @@
 
 #include "song.h"
 #include "printf.h"
+#include "stdint.h"
 
 typedef struct {
 	/* <chunk type><length><format><number of tracks><division>
@@ -27,8 +28,8 @@ void run_activity_4() {
 	midi_header* sample_header =  (midi_header*)(get_song(0).p_song);
 	printf("Chunk Type: %s\r\n", sample_header->chunk_type);
 	printf("Length: %ld\r\n", sample_header->length);
-	printf("Format: %d\r\n", sample_header->format);
-	printf("Number of tracks: %d\r\n", sample_header->number_of_tracks);
-	printf("Division: %d\r\n", sample_header->division);
+	printf("Format: %d\r\n", convert_to_uint16((uint8_t*)(&sample_header->format)));
+	printf("Number of tracks: %d\r\n", convert_to_uint16((uint8_t*)&sample_header->number_of_tracks));
+	printf("Division: %d\r\n", convert_to_uint16((uint8_t*)&sample_header->division));
 
 }
