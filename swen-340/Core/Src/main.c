@@ -16,11 +16,10 @@ int main(void){
 	System_Clock_Init(); // set System Clock = 80 MHz
 	LED_Init();
 	UART2_Init();
-	display_menu();
 
+	// Project Part 1 Stuff
+	display_menu();
 	char buffer_input[7];
 	read_input_string(buffer_input, 7);
-	printf("\r\n%s\r\n", buffer_input);
-
-// COMMENT FOR TESTING BETWEEN IDES
+	printf("%s\r\n", buffer_input);
 }

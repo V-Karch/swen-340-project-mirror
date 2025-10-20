@@ -2,7 +2,7 @@
  * project.c
  *
  *  Created on: Jan 8, 2023
- *      Author: bruce
+ *      Author: V-Karch
  */
 
 #include "project.h"
@@ -17,14 +17,23 @@ void read_input_string(char *buffer, uint32_t max_length) {
 
     while (i < max_length - 1) {
         character = (char)USART_Read(USART2);
-        USART_Write(USART2, (uint8_t *)&character, 1);
-        // ^^ Echo typing back into terminal
+
         if (character == '\n' || character == '\r') {
             break;
         }
 
+        if (character == 0x08 || character == 0x7F) { // Backspaces
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+            continue;
+        }
+
         buffer[i++] = character;
+        printf("%c", character);
     }
 
-    buffer[i] = '\0'; // null terminate
+    buffer[i] = '\0';
+    printf("\r\n");
 }
