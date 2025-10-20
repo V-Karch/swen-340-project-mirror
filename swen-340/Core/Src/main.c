@@ -17,5 +17,10 @@ int main(void){
 	LED_Init();
 	UART2_Init();
 	display_menu();
+
+	char buffer_input[7];
+	read_input_string(buffer_input, 7);
+	printf("\r\n%s\r\n", buffer_input);
+
 // COMMENT FOR TESTING BETWEEN IDES
 }

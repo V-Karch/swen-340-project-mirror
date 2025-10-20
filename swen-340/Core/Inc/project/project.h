@@ -13,5 +13,6 @@
 
 void run_project();
 void display_menu();
+void read_input_string(char *buffer, uint32_t max_length);
 
 #endif /* INC_PROJECT_H_ */
