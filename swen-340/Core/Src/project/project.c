@@ -49,10 +49,12 @@ void handle_user_input(char* buffer) {
 		printf("\r\nAttempting to view next song...\r\n\r\n");
 	} else if (strcmp(buffer, "PLAY") == 0) {
 		printf("\r\nAttempting to play song...\r\n\r\n");
+		LED_On();
 	} else if (strcmp(buffer, "PAUSE") == 0) {
 		printf("\r\nAttempting to pause song...\r\n\r\n");
 	} else if (strcmp(buffer, "STOP") == 0) {
 		printf("\r\nAttempting to stop song...\r\n\r\n");
+		LED_Off();
 	} else {
 		printf("\r\nInvalid command\r\n\r\n");
 	}

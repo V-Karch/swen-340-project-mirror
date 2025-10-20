@@ -11,6 +11,7 @@
 #include "UART.h"
 #include "printf.h"
 #include "string.h"
+#include "LED.h"
 
 void run_project();
 void display_menu();
