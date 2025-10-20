@@ -150,3 +150,11 @@ void USART_IRQHandler(USART_TypeDef * USARTx, uint8_t *buffer, uint32_t * pRx_co
 	}	
 }
 
+uint8_t USART_Read_Non_Blocking (USART_TypeDef * USARTx) {
+    // SR_RXNE (Read data register not empty) bit is set by hardware
+    if ((USARTx->ISR & USART_ISR_RXNE))  // Wait until RXNE (RX not empty) bit is set
+        // USART resets the RXNE flag automatically after reading DR
+        return ((uint8_t)(USARTx->RDR & 0xFF));
+    // Reading USART_DR automatically clears the RXNE flag
+    return 0;
+}

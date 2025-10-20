@@ -13,10 +13,14 @@ void display_menu() {
 
 void read_input_string(char *buffer, uint32_t max_length) {
     uint32_t i = 0;
-    char character;
+    char character = 0;
 
-    while (i < max_length - 1) {
-        character = (char)USART_Read(USART2);
+    while (1) {
+        character = (char)USART_Read_Non_Blocking(USART2);
+
+        if (character == 0) {
+            continue;
+        }
 
         if (character == '\n' || character == '\r') {
             break;
@@ -30,8 +34,10 @@ void read_input_string(char *buffer, uint32_t max_length) {
             continue;
         }
 
-        buffer[i++] = character;
-        printf("%c", character);
+        if (i < max_length - 1) {
+            buffer[i++] = character;
+            printf("%c", character);
+        }
     }
 
     buffer[i] = '\0';
