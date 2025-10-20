@@ -8,6 +8,10 @@
 #ifndef INC_PROJECT_H_
 #define INC_PROJECT_H_
 
-void run_project ();
+#include "UART.h"
+#include "printf.h"
+
+void run_project();
+void display_menu();
 
 #endif /* INC_PROJECT_H_ */

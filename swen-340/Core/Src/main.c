@@ -9,13 +9,13 @@
 #include "UART.h"
 #include "demo.h"
 #include "printf.h"
+#include "project.h"
 	
 int main(void){
 	// initialization code
 	System_Clock_Init(); // set System Clock = 80 MHz
 	LED_Init();
 	UART2_Init();
-	// run_activity_4();
-	run_activity_6();
+	display_menu();
 // COMMENT FOR TESTING BETWEEN IDES
 }
