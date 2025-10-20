@@ -37,3 +37,19 @@ void read_input_string(char *buffer, uint32_t max_length) {
     buffer[i] = '\0';
     printf("\r\n");
 }
+
+void handle_user_input(char* buffer) {
+	if (strcmp(buffer, "NEXT") == 0) {
+		printf("Attempting to view next song...\r\n");
+	} else if (strcmp(buffer, "PLAY") == 0) {
+		printf("Attempting to play song...\r\n");
+	} else if (strcmp(buffer, "PAUSE") == 0) {
+		printf("Attempting to pause song...\r\n");
+	} else if (strcmp(buffer, "STOP") == 0) {
+		printf("Attempting to stop song...\r\n");
+	} else {
+		printf("\r\nInvalid command\r\n");
+	}
+
+	display_menu(); // Find a way to revert to the loop here
+}

@@ -21,5 +21,5 @@ int main(void){
 	display_menu();
 	char buffer_input[7];
 	read_input_string(buffer_input, 7);
-	printf("%s\r\n", buffer_input);
+	handle_user_input(buffer_input);
 }
