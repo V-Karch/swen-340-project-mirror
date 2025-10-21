@@ -19,7 +19,7 @@ typedef struct {
 	uint32_t SYST_RVR;
 	uint32_t SYST_CVR;
 	uint32_t SYST_CALIB;
-} SysTick;
+} SYSTICK;
 
 // This fuction is to create delay using SysTick timer counter
 void delay_systick();

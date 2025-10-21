@@ -12,6 +12,7 @@
 #include "printf.h"
 #include "string.h"
 #include "song.h"
+#include "systick.h"
 #include "LED.h"
 
 typedef struct {
@@ -34,11 +35,20 @@ typedef struct {
 	unsigned short division;
 } midi_header;
 
+typedef struct {
+    char title[128];
+    char copyright[128];
+    uint32_t tempo;  // microseconds per quarter note
+} midi_info;
+
 void run_project();
 void display_menu();
 void read_input_string(char *buffer, uint32_t max_length);
 void handle_user_input(char* buffer);
+void handle_LED();
 uint16_t convert_to_uint16(uint8_t* byte_0);
 uint32_t convert_to_uint32(uint8_t* byte_0);
+uint32_t read_var_len(const uint8_t **ptr);
+midi_info parse_midi_meta_events(uint8_t *data, uint32_t size);
 
 #endif /* INC_PROJECT_H_ */

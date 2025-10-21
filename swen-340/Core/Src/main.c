@@ -10,12 +10,14 @@
 #include "demo.h"
 #include "printf.h"
 #include "project.h"
+#include "systick.h"
 	
 int main(void){
 	// initialization code
 	System_Clock_Init(); // set System Clock = 80 MHz
 	LED_Init();
 	UART2_Init();
+	init_systick();
 
 	run_project();
 }

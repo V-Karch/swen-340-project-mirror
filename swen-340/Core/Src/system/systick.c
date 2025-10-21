@@ -1,6 +1,6 @@
 #include "systick.h"
 
-SysTick* systick = (SysTick*)0xE000E010;
+SYSTICK* systick = (SYSTICK*)0xE000E010;
 
 // This function is to Initialize SysTick registers
 void init_systick()
