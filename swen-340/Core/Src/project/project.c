@@ -143,8 +143,6 @@ midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
 
 
 void handle_LED() {
-    static uint32_t counter = 0;
-
     switch (LED_status) {
         case 0:
         	LED_Off();
@@ -153,11 +151,8 @@ void handle_LED() {
 			LED_On();
 			break;
         case 2:
-            counter++;
-            if (counter >= 400000) {
-                LED_Toggle();
-                counter = 0;
-            }
+            LED_Toggle();
+            delay_systick();
             break;
     }
 }
