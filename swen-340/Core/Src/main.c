@@ -17,11 +17,5 @@ int main(void){
 	LED_Init();
 	UART2_Init();
 
-	// Project Part 1 Stuff
-	while (1) {
-		display_menu();
-		char buffer_input[7];
-		read_input_string(buffer_input, 7);
-		handle_user_input(buffer_input);
-	}
+	run_project();
 }

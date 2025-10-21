@@ -1,8 +1,13 @@
 #include "systick.h"
 
+SysTick* systick = (SysTick*)0xE000E010;
+
 // This function is to Initialize SysTick registers
 void init_systick()
 {
+	systick->SYST_CSR |= 1;
+	systick->SYST_RVR = 8000000;
+	systick->SYST_CSR |= (1 << 2);
 	// Use the SysTick global structure pointer to do the following in this
 	// exact order with separate lines for each step:
 	//
@@ -15,6 +20,11 @@ void init_systick()
 // This fuction is to create delay using SysTick timer counter
 void delay_systick()
 {
+	for (int i = 0; i < 10; i++) {
+		while (systick->SYST_CSR & (1 << 16)) {
+			// wait.....
+		}
+	}
 	// Using the SysTick global structure pointer do the following:
 	// Create a for loop that loops 10 times
 	// Inside that for loop check the COUNTFLAG bit in the CTRL (CSR)
