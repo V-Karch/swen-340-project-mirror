@@ -20,4 +20,10 @@ int main(void){
 	init_systick();
 
 	run_project();
+//	while (1) {
+//		LED_On();
+//		delay_systick();
+//		LED_Off();
+//		delay_systick();
+//	}
 }

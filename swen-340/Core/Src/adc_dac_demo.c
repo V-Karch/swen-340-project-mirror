@@ -21,7 +21,7 @@ void run_adc_dac_demo()
 {
 	uint16_t counter = 0;
 	// printf ("Start!\n\r");
-	init_systick();
+//	init_systick();
 	DAC_Init ();
 	ADC_Init ();
 

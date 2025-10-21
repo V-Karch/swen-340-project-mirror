@@ -5,9 +5,10 @@ SYSTICK* systick = (SYSTICK*)0xE000E010;
 // This function is to Initialize SysTick registers
 void init_systick()
 {
-	systick->SYST_CSR |= 1;
-	systick->SYST_RVR = 8000000;
+	systick->SYST_CSR &= 0;
+	systick->SYST_RVR = 80000000;
 	systick->SYST_CSR |= (1 << 2);
+	systick->SYST_CSR |= 1;
 	// Use the SysTick global structure pointer to do the following in this
 	// exact order with separate lines for each step:
 	//

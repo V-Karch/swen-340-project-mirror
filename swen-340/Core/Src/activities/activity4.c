@@ -24,12 +24,12 @@ typedef struct {
 	unsigned short division;
 } midi_header;
 
-void run_activity_4() {
-	midi_header* sample_header =  (midi_header*)(get_song(0).p_song);
-	printf("Chunk Type: %s\r\n", sample_header->chunk_type);
-	printf("Length: %ld\r\n", convert_to_uint32((uint8_t*)(&sample_header->length)));
-	printf("Format: %d\r\n", convert_to_uint16((uint8_t*)(&sample_header->format)));
-	printf("Number of tracks: %d\r\n", convert_to_uint16((uint8_t*)&sample_header->number_of_tracks));
-	printf("Division: %d\r\n", convert_to_uint16((uint8_t*)&sample_header->division));
-
-}
+//void run_activity_4() {
+//	midi_header* sample_header =  (midi_header*)(get_song(0).p_song);
+//	printf("Chunk Type: %s\r\n", sample_header->chunk_type);
+//	printf("Length: %ld\r\n", convert_to_uint32((uint8_t*)(&sample_header->length)));
+//	printf("Format: %d\r\n", convert_to_uint16((uint8_t*)(&sample_header->format)));
+//	printf("Number of tracks: %d\r\n", convert_to_uint16((uint8_t*)&sample_header->number_of_tracks));
+//	printf("Division: %d\r\n", convert_to_uint16((uint8_t*)&sample_header->division));
+//
+//}

@@ -154,7 +154,7 @@ void handle_LED() {
 			break;
         case 2:
             counter++;
-            if (counter >= 100000) {
+            if (counter >= 400000) {
                 LED_Toggle();
                 counter = 0;
             }
