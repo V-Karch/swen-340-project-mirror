@@ -12,6 +12,7 @@
 #include "project.h"
 #include "systick.h"
 #include "main.h"
+#include "GPIO.h"
 
 int main(void){
 	// initialization code
