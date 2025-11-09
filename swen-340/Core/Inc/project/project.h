@@ -43,7 +43,7 @@ typedef struct {
 
 typedef struct {
 	uint32_t last_push_time;
-	uint8_t rising_status;
+	uint8_t is_pressed;
 	uint32_t double_press_timeout;
 	uint8_t activate_single_press;
 } button;

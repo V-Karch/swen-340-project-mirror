@@ -10,10 +10,8 @@
 #include "systick.h"
 #include "main.h"
 
-uint8_t LED_status = 0;
+uint8_t LED_Status = 0;
 uint8_t MODE_STATUS = 1;
-// 0 -> Local
-// 1 -> Remote
 uint8_t playing_toggle = 0;
 
 char buffer_input[7];
@@ -72,6 +70,10 @@ void read_input_string(char *buffer, uint32_t max_length) {
     char character = 0;
 
 	character = (char)USART_Read_Non_Blocking(USART2);
+
+	if (MODE_STATUS == 0) {
+		return;
+	}
 
 	if (character == 0) {
 		return;
@@ -187,7 +189,7 @@ midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
  * - 2: LED flashing
  */
 void handle_LED() {
-    switch (LED_status) {
+    switch (LED_Status) {
         case 0:
         	LED_Off();
         	break;
@@ -195,8 +197,13 @@ void handle_LED() {
 			LED_On();
 			break;
         case 2:
-            LED_Toggle();
-            delay_systick();
+        	if ((get_total_count() % 2000) / 1000) {
+        		LED_On();
+        	} else {
+        		LED_Off();
+        	}
+//            LED_Toggle();
+//            delay_systick();
             break;
     }
 }
@@ -231,13 +238,13 @@ void handle_user_input(char* buffer) {
 			next_song_display();
 		} else if (strcmp(buffer, "PLAY") == 0) {
 			printf("\r\nAttempting to play song...\r\n\r\n");
-			LED_status = 1;
+			LED_Status = 1;
 		} else if (strcmp(buffer, "PAUSE") == 0) {
 			printf("\r\nAttempting to pause song...\r\n\r\n");
-			LED_status = 2;
+			LED_Status = 2;
 		} else if (strcmp(buffer, "STOP") == 0) {
 			printf("\r\nAttempting to stop song...\r\n\r\n");
-			LED_status = 0;
+			LED_Status = 0;
 		} else if (strcmp(buffer, "HELP") == 0) {
 			display_menu();
 		} else {
@@ -258,11 +265,11 @@ void handle_user_input(char* buffer) {
 void EXTI15_10_IRQHandler() {
 	// BLUE BUTTON
 	HAL_GPIO_EXTI_IRQHandler(B1_Pin);
-	if (MODE_STATUS == 0) {
-		MODE_STATUS = 1;
+	if (MODE_STATUS == 1) {
+		MODE_STATUS = 0;
 		printf("\r\n***MANUAL OVERRIDE MODE ACTIVE***\r\n>>>");
 	} else {
-		MODE_STATUS = 0;
+		MODE_STATUS = 1;
 		printf("\r\n***REMOTE MODE ACTIVE***\r\n>>>");
 	}
 	// CODE HERE
@@ -276,7 +283,7 @@ void EXTI9_5_IRQHandler() {
 	// HARDWARE BUTTON
 	HAL_GPIO_EXTI_IRQHandler(S1_Pin);
 	//printf("AAAAAAAAAAAAAAAAAA\r\n");
-	if (MODE_STATUS == 0) {
+	if (MODE_STATUS == 1) {
 		return;
 	}
 
@@ -284,21 +291,24 @@ void EXTI9_5_IRQHandler() {
 		return;
 	}
 
-	S1.rising_status = HAL_GPIO_ReadPin(S1_GPIO_Port, S1_Pin);
+	S1.is_pressed = HAL_GPIO_ReadPin(S1_GPIO_Port, S1_Pin);
 
-	if (S1.last_push_time + 1000 > get_total_count() && S1.rising_status == 1) { // Double Press
+	if (S1.last_push_time + 1000 > get_total_count() && S1.is_pressed == 1) { // Double Press
 		next_song_display();
-	} else if (S1.last_push_time + 1000 < get_total_count() && S1.rising_status == 0) { // HOLD
-		LED_status = 0;
-	} else if (S1.rising_status == 1) {
+		S1.double_press_timeout = 0x7FFFFFFF;
+		S1.activate_single_press = 0;
+	} else if (S1.last_push_time + 1000 < get_total_count() && S1.is_pressed == 0) { // HOLD
+		LED_Status = 0;
+		S1.double_press_timeout = 0x7FFFFFFF;
+		S1.activate_single_press = 0;
+	} else if (S1.is_pressed == 1) {
 		S1.activate_single_press = 1;
 		S1.double_press_timeout = get_total_count() + 1000;
-		printf("ELSE :D\r\n");
+
+		S1.last_push_time = get_total_count();
+		return;
 	}
 
-	S1.last_push_time = get_total_count();
-
-	// CODE HERE
 }
 
 /**
@@ -312,12 +322,20 @@ void run_project() {
 	printf(">>> ");
 
 	while (1) {
+		read_input_string(buffer_input, 7);
 		if (MODE_STATUS) {
-			read_input_string(buffer_input, 7);
 			handle_user_input(buffer_input);
 		} else {
 			// LOCAL MODE
-			// Add code here
+			if (S1.double_press_timeout < get_total_count() && S1.activate_single_press && !S1.is_pressed) {
+				S1.double_press_timeout = 0x7FFFFFFF;
+				S1.activate_single_press = 0;
+				if (LED_Status == 1) {
+					LED_Status = 2;
+				} else {
+					LED_Status = 1;
+				}
+			}
 		}
 		handle_LED();
 	}
