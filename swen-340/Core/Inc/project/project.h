@@ -41,6 +41,13 @@ typedef struct {
     uint32_t tempo;  // microseconds per quarter note
 } midi_info;
 
+typedef struct {
+	uint32_t last_push_time;
+	uint8_t rising_status;
+	uint32_t double_press_timeout;
+	uint8_t activate_single_press;
+} button;
+
 void run_project();
 void display_menu();
 void read_input_string(char *buffer, uint32_t max_length);

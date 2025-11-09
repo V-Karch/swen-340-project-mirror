@@ -1,12 +1,18 @@
 #include "systick.h"
 
 SYSTICK* systick = (SYSTICK*)0xE000E010;
+uint32_t TOTAL_COUNT = 0;
+
+uint32_t get_total_count() {
+	return TOTAL_COUNT;
+}
 
 // This function is to Initialize SysTick registers
 void init_systick()
 {
 	systick->SYST_CSR = 0;
-	systick->SYST_RVR = 8000000;
+	systick->SYST_RVR = 80000;
+	systick->SYST_CSR |= (1 << 1);
 	systick->SYST_CSR |= (1 << 2);
 	systick->SYST_CSR |= 1;
 	// Use the SysTick global structure pointer to do the following in this
@@ -31,4 +37,10 @@ void delay_systick()
 	// Inside that for loop check the COUNTFLAG bit in the CTRL (CSR)
 	// register in a loop. When that bit is set exit this inner loop
 	// to do another pass in the outer loop of 10.
+}
+
+void SysTick_Handler(void) {
+	volatile uint8_t some = (systick->SYST_CSR & (1 << 16)); // Clear on read
+	some = some; // Variable is now used... :D
+	TOTAL_COUNT++;
 }

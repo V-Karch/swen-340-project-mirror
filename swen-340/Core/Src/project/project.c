@@ -7,17 +7,21 @@
 
 #include "project.h"
 #include "GPIO.h"
+#include "systick.h"
 #include "main.h"
 
 uint8_t LED_status = 0;
-uint8_t MODE_STATUS = 0;
+uint8_t MODE_STATUS = 1;
 // 0 -> Local
 // 1 -> Remote
+uint8_t playing_toggle = 0;
 
 char buffer_input[7];
 uint8_t buffer_reset = 0;
 uint32_t buffer_index = 0;
 uint8_t song_number = 0;
+
+static button S1 = {0};
 
 /**
  * @brief Convert two bytes starting at byte_0 into a 16-bit unsigned integer.
@@ -197,6 +201,25 @@ void handle_LED() {
     }
 }
 
+void next_song_display() {
+	printf("\r\nAttempting to view next song...\r\n\r\n");
+	song s = get_song(song_number);
+
+	if (song_number == 4) {
+		song_number = 0;
+	} else {
+		song_number++;
+	}
+
+	midi_info info = parse_midi_meta_events(s.p_song, s.size);
+
+	printf("Title: %s\r\n", info.title);
+	printf("Copyright: %s\r\n", info.copyright); // Why does this just not display for some tracks
+	// Am I losing my mind
+	// This function hurt my brain and took ages to make
+	printf("Tempo: %u\r\n", (unsigned int)info.tempo);
+}
+
 /**
  * @brief Process the user input string and execute corresponding commands.
  * @param buffer Pointer to input string buffer.
@@ -205,22 +228,7 @@ void handle_user_input(char* buffer) {
 	if (buffer_reset) {
 		if (strcmp(buffer, "NEXT") == 0) {
 			printf("\r\nAttempting to view next song...\r\n\r\n");
-			song s = get_song(song_number);
-
-			if (song_number == 4) {
-				song_number = 0;
-			} else {
-				song_number++;
-			}
-
-			midi_info info = parse_midi_meta_events(s.p_song, s.size);
-
-			printf("Title: %s\r\n", info.title);
-			printf("Copyright: %s\r\n", info.copyright); // Why does this just not display for some tracks
-			// Am I losing my mind
-			// This function hurt my brain and took ages to make
-			printf("Tempo: %u\r\n", (unsigned int)info.tempo);
-
+			next_song_display();
 		} else if (strcmp(buffer, "PLAY") == 0) {
 			printf("\r\nAttempting to play song...\r\n\r\n");
 			LED_status = 1;
@@ -267,7 +275,29 @@ void EXTI15_10_IRQHandler() {
 void EXTI9_5_IRQHandler() {
 	// HARDWARE BUTTON
 	HAL_GPIO_EXTI_IRQHandler(S1_Pin);
-	printf("S1!\r\n");
+	//printf("AAAAAAAAAAAAAAAAAA\r\n");
+	if (MODE_STATUS == 0) {
+		return;
+	}
+
+	if (S1.last_push_time + 15 > get_total_count()) {
+		return;
+	}
+
+	S1.rising_status = HAL_GPIO_ReadPin(S1_GPIO_Port, S1_Pin);
+
+	if (S1.last_push_time + 1000 > get_total_count() && S1.rising_status == 1) { // Double Press
+		next_song_display();
+	} else if (S1.last_push_time + 1000 < get_total_count() && S1.rising_status == 0) { // HOLD
+		LED_status = 0;
+	} else if (S1.rising_status == 1) {
+		S1.activate_single_press = 1;
+		S1.double_press_timeout = get_total_count() + 1000;
+		printf("ELSE :D\r\n");
+	}
+
+	S1.last_push_time = get_total_count();
+
 	// CODE HERE
 }
 
@@ -277,12 +307,18 @@ void EXTI9_5_IRQHandler() {
  * handle commands, and control LED behavior.
  */
 void run_project() {
+	S1.last_push_time = 0;
 	display_menu();
 	printf(">>> ");
 
 	while (1) {
-		read_input_string(buffer_input, 7);
-		handle_user_input(buffer_input);
+		if (MODE_STATUS) {
+			read_input_string(buffer_input, 7);
+			handle_user_input(buffer_input);
+		} else {
+			// LOCAL MODE
+			// Add code here
+		}
 		handle_LED();
 	}
 }

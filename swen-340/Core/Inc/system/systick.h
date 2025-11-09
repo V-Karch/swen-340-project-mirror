@@ -12,6 +12,7 @@
 
 // This function is to Initialize SysTick registers
 void init_systick();
+uint32_t get_total_count();
 
 typedef struct {
 	// Starting from 0xE000E010
