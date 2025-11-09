@@ -10,6 +10,9 @@
 #include "main.h"
 
 uint8_t LED_status = 0;
+uint8_t MODE_STATUS = 0;
+// 0 -> Local
+// 1 -> Remote
 
 char buffer_input[7];
 uint8_t buffer_reset = 0;
@@ -247,7 +250,13 @@ void handle_user_input(char* buffer) {
 void EXTI15_10_IRQHandler() {
 	// BLUE BUTTON
 	HAL_GPIO_EXTI_IRQHandler(B1_Pin);
-	printf("B1\r\n");
+	if (MODE_STATUS == 0) {
+		MODE_STATUS = 1;
+		printf("\r\n***MANUAL OVERRIDE MODE ACTIVE***\r\n>>>");
+	} else {
+		MODE_STATUS = 0;
+		printf("\r\n***REMOTE MODE ACTIVE***\r\n>>>");
+	}
 	// CODE HERE
 }
 
