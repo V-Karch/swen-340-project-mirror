@@ -16,14 +16,29 @@ uint8_t buffer_reset = 0;
 uint32_t buffer_index = 0;
 uint8_t song_number = 0;
 
+/**
+ * @brief Convert two bytes starting at byte_0 into a 16-bit unsigned integer.
+ * @param byte_0 Pointer to the first byte of a two-byte sequence.
+ * @return The resulting 16-bit unsigned integer.
+ */
 uint16_t convert_to_uint16(uint8_t* byte_0) {
 	return ((*byte_0 << 8) + byte_0[1]);
 }
 
+/**
+ * @brief Convert four bytes starting at byte_0 into a 32-bit unsigned integer.
+ * @param byte_0 Pointer to the first byte of a four-byte sequence.
+ * @return The resulting 32-bit unsigned integer.
+ */
 uint32_t convert_to_uint32(uint8_t* byte_0) {
 	return ((*byte_0 << 24) + (byte_0[1] << 16) + (byte_0[2] << 8) + (byte_0[3]));
 }
 
+/**
+ * @brief Read a variable-length quantity from a pointer and advance the pointer.
+ * @param ptr Double pointer to the data source.
+ * @return The decoded 32-bit integer value.
+ */
 uint32_t read_var_len(const uint8_t **ptr) {
     uint32_t value = 0;
     uint8_t c;
@@ -34,10 +49,18 @@ uint32_t read_var_len(const uint8_t **ptr) {
     return value;
 }
 
+/**
+ * @brief Display the remote LED control command menu via serial output.
+ */
 void display_menu() {
 	printf("***REMOTE LED CONTROL MENU***\r\nAvailable User Commands\r\nNEXT - Show next song info\r\nPLAY - Play the song (LED ON)\r\nPAUSE - Pause the song (LED FLASH)\r\nSTOP - Stop the song(LED off)\r\n\r\n");
 }
 
+/**
+ * @brief Read user input from USART in a non-blocking manner.
+ * @param buffer Character buffer to store input string.
+ * @param max_length Maximum number of characters to read (including null terminator).
+ */
 void read_input_string(char *buffer, uint32_t max_length) {
     char character = 0;
 
@@ -69,6 +92,12 @@ void read_input_string(char *buffer, uint32_t max_length) {
     buffer[buffer_index] = '\0';
 }
 
+/**
+ * @brief Parse MIDI meta events from raw data and extract key metadata.
+ * @param data Pointer to MIDI file data.
+ * @param size Size of the MIDI data buffer.
+ * @return A midi_info struct containing parsed metadata (title, copyright, tempo).
+ */
 midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
     midi_info info;
     memset(&info, 0, sizeof(info));
@@ -143,7 +172,13 @@ midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
     return info;
 }
 
-
+/**
+ * @brief Handle the LED behavior based on the current LED_status value.
+ * @details
+ * - 0: LED off
+ * - 1: LED on
+ * - 2: LED flashing
+ */
 void handle_LED() {
     switch (LED_status) {
         case 0:
@@ -159,6 +194,10 @@ void handle_LED() {
     }
 }
 
+/**
+ * @brief Process the user input string and execute corresponding commands.
+ * @param buffer Pointer to input string buffer.
+ */
 void handle_user_input(char* buffer) {
 	if (buffer_reset) {
 		if (strcmp(buffer, "NEXT") == 0) {
@@ -201,6 +240,10 @@ void handle_user_input(char* buffer) {
 	}
 }
 
+/**
+ * @brief Interrupt handler for EXTI lines 15 to 10.
+ * @details Triggered by the BLUE BUTTON (B1_Pin).
+ */
 void EXTI15_10_IRQHandler() {
 	// BLUE BUTTON
 	HAL_GPIO_EXTI_IRQHandler(B1_Pin);
@@ -208,6 +251,10 @@ void EXTI15_10_IRQHandler() {
 	// CODE HERE
 }
 
+/**
+ * @brief Interrupt handler for EXTI lines 9 to 5.
+ * @details Triggered by the hardware button (S1_Pin).
+ */
 void EXTI9_5_IRQHandler() {
 	// HARDWARE BUTTON
 	HAL_GPIO_EXTI_IRQHandler(S1_Pin);
@@ -215,6 +262,11 @@ void EXTI9_5_IRQHandler() {
 	// CODE HERE
 }
 
+/**
+ * @brief Main runtime function for the LED control project.
+ * @details Displays the menu, then enters an infinite loop to read user input,
+ * handle commands, and control LED behavior.
+ */
 void run_project() {
 	display_menu();
 	printf(">>> ");
