@@ -11,15 +11,21 @@
 #include "printf.h"
 #include "project.h"
 #include "systick.h"
-	
+#include "main.h"
+
 int main(void){
 	// initialization code
 	System_Clock_Init(); // set System Clock = 80 MHz
 	LED_Init();
 	UART2_Init();
+	GPIO_Init();
 	init_systick();
 
+	NVIC_EnableIRQ(EXTI9_5_IRQn);
+	NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 	run_project();
+
 //	while (1) {
 //		LED_On();
 //		delay_systick();

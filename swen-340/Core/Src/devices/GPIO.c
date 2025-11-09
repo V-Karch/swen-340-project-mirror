@@ -47,4 +47,3 @@ void GPIO_Init(void)
 	// Note you will have to add EXTI9_15_IRQn Interrupt handler function as well
 	// This is the interrupt handler for the external buttons (S1)
 }
-

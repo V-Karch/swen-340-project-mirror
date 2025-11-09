@@ -17,7 +17,7 @@ typedef struct {
 	// Starting from 0xE000E010
 	uint32_t SYST_CSR;
 	uint32_t SYST_RVR;
-	uint32_t SYST_CVR;
+	uint32_t SYST_CVR; // Current value
 	uint32_t SYST_CALIB;
 } SYSTICK;
 

@@ -6,6 +6,8 @@
  */
 
 #include "project.h"
+#include "GPIO.h"
+#include "main.h"
 
 uint8_t LED_status = 0;
 
@@ -197,6 +199,20 @@ void handle_user_input(char* buffer) {
 
 		printf(">>> ");
 	}
+}
+
+void EXTI15_10_IRQHandler() {
+	// BLUE BUTTON
+	HAL_GPIO_EXTI_IRQHandler(B1_Pin);
+	printf("B1\r\n");
+	// CODE HERE
+}
+
+void EXTI9_5_IRQHandler() {
+	// HARDWARE BUTTON
+	HAL_GPIO_EXTI_IRQHandler(S1_Pin);
+	printf("S1!\r\n");
+	// CODE HERE
 }
 
 void run_project() {
