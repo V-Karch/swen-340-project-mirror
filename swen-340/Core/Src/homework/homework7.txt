@@ -1,0 +1,9 @@
+Parse this track event
+0x3B 0x80 0x27 0x00
+
+Delay -> 59 Midi Ticks
+Event -> 0x8 Note Off Event
+Channel -> 0
+Event Data:
+	Key -> 39
+	Velocity -> 0
