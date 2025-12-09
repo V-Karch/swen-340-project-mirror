@@ -43,7 +43,8 @@ uint8_t remove_tone (uint8_t note);
 /**
  * Starts playing any tones that have been added.
  */
-void play_tones ();
+void play_tones(uint32_t index);
+void play_freq();
 
 
 #endif /* INC_TONE_H_ */

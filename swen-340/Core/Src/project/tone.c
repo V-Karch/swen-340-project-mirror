@@ -30,7 +30,7 @@ typedef struct {
 } tone_info;
 
 static uint32_t counter = 0;
-
+float note_to_play = 100;
 static tone_info tones[MAX_TONES] = {{0,0}};
 
 /* You will want to integrate this with your existing one
@@ -63,20 +63,30 @@ void reset_counter () {
 
 // Add a tone to the tones array
 uint8_t add_tone (uint8_t note, uint8_t velocity) {
-	tones [0] = (tone_info){hertz_to_systicks (notes [note]), velocity};
+	tones [0] = (tone_info){hertz_to_systicks (notes[note]), velocity};
 	return 0;
 }
 
 // Remove a tone from the tones array
 uint8_t remove_tone (uint8_t note) {
-	tones [0].duration = hertz_to_systicks (notes [note]);
+	tones [0].duration = hertz_to_systicks(notes[note]);
 	tones [0].power = 0;
 	return 0;
 }
 
-// Play any tones in the array
-void play_tones () {
+void play_freq() {
+    uint32_t rollover = hertz_to_systicks(note_to_play);
+    if ((get_total_count () % rollover) < (rollover >> 1)) { // get_count() is an accessor for the number of times that systick has rolled over. The count variable should be incremented every time the systick interrupts fires
+        DAC_Set_Value(3000); // change to adjust volume
+    }
+    else {
+        DAC_Set_Value(0);
+    }
+}
 
+// Play any tones in the array
+void play_tones(uint32_t index) {
+	note_to_play = notes[index];
 }
 
 

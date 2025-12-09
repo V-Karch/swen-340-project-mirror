@@ -1,4 +1,5 @@
 #include "systick.h"
+#include "tone.h"
 
 SYSTICK* systick = (SYSTICK*)0xE000E010;
 uint32_t TOTAL_COUNT = 0;
@@ -11,7 +12,7 @@ uint32_t get_total_count() {
 void init_systick()
 {
 	systick->SYST_CSR = 0;
-	systick->SYST_RVR = 80000;
+	systick->SYST_RVR = 79;
 	systick->SYST_CSR |= (1 << 1);
 	systick->SYST_CSR |= (1 << 2);
 	systick->SYST_CSR |= 1;
@@ -27,7 +28,7 @@ void init_systick()
 // This fuction is to create delay using SysTick timer counter
 void delay_systick()
 {
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 1000000; i++) {
 		while (!(systick->SYST_CSR & (1 << 16))) {
 			// wait.....
 		}
@@ -41,6 +42,7 @@ void delay_systick()
 
 void SysTick_Handler(void) {
 	volatile uint8_t some = (systick->SYST_CSR & (1 << 16)); // Clear on read
+
 	some = some; // Variable is now used... :D
 	TOTAL_COUNT++;
 }

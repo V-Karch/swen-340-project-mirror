@@ -26,11 +26,4 @@ int main(void){
 	NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 	run_project();
-
-//	while (1) {
-//		LED_On();
-//		delay_systick();
-//		LED_Off();
-//		delay_systick();
-//	}
 }

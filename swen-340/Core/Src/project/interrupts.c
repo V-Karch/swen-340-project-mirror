@@ -1,6 +1,8 @@
 #include "interrupts.h"
 #include "project.h"
 #include <stdio.h>
+#include "main.h"
+#include "GPIO.h"
 
 extern uint8_t MODE_STATUS;
 extern uint8_t LED_Status;
