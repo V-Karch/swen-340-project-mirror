@@ -8,7 +8,7 @@ void handle_LED() {
         case 0: LED_Off(); break;
         case 1: LED_On(); break;
         case 2:
-            if ((get_total_count() % 2000) / 1000)
+            if ((get_total_count() % 2000000) / 1000000)
                 LED_On();
             else
                 LED_Off();

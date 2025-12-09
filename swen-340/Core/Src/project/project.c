@@ -42,24 +42,24 @@ void speaker_test() {
 }
 
 void run_project() {
-//    S1.last_push_time = 0;
-//    display_menu();
-//    printf(">>> ");
-//
-//    while (1) {
-//        read_input_string(buffer_input, 7);
-//        if (MODE_STATUS) {
-//            handle_user_input(buffer_input);
-//        } else {
-//            if (S1.double_press_timeout < get_total_count() && S1.activate_single_press && !S1.is_pressed) {
-//                S1.double_press_timeout = 0x7FFFFFFF;
-//                S1.activate_single_press = 0;
-//                LED_Status = (LED_Status == 1) ? 2 : 1;
-//            }
-//        }
-//        handle_LED();
-//    }
-	speaker_test();
+    S1.last_push_time = 0;
+    display_menu();
+    printf(">>> ");
+
+    while (1) {
+        read_input_string(buffer_input, 7);
+        if (MODE_STATUS) {
+            handle_user_input(buffer_input);
+        } else {
+            if (S1.double_press_timeout < get_total_count() && S1.activate_single_press && !S1.is_pressed) {
+                S1.double_press_timeout = 0x7FFFFFFF;
+                S1.activate_single_press = 0;
+                LED_Status = (LED_Status == 1) ? 2 : 1;
+            }
+        }
+        handle_LED();
+    }
+	// speaker_test();
 }
 
 //
