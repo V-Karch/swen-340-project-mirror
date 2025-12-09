@@ -7,6 +7,7 @@
 
 
 #include "tone.h"
+#include "systick.h"
 
 #define CPU_SPEED (80000000.0)
 #define MAX_TONES (1)
@@ -24,13 +25,10 @@ static float notes[] = {
 /* Octave  8 */         4186.01, 4434.92, 4698.63, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040.00, 7458.62, 7902.13,
 /* Octave  9 */         8372.02, 8869.84, 9397.26, 9956.06,10548.08,11175.30,11839.82,12543.86};
 
-typedef struct {
-	uint32_t duration;
-	uint16_t power;
-} tone_info;
-
 static uint32_t counter = 0;
-float note_to_play = 100;
+
+tone_info note_played_info = {0, 100.0, 3000};
+
 static tone_info tones[MAX_TONES] = {{0,0}};
 
 /* You will want to integrate this with your existing one
@@ -75,7 +73,7 @@ uint8_t remove_tone (uint8_t note) {
 }
 
 void play_freq() {
-    uint32_t rollover = hertz_to_systicks(note_to_play);
+    uint32_t rollover = hertz_to_systicks(note_played_info.frequency);
     if ((get_total_count () % rollover) < (rollover >> 1)) { // get_count() is an accessor for the number of times that systick has rolled over. The count variable should be incremented every time the systick interrupts fires
         DAC_Set_Value(3000); // change to adjust volume
     }
@@ -86,7 +84,7 @@ void play_freq() {
 
 // Play any tones in the array
 void play_tones(uint32_t index) {
-	note_to_play = notes[index];
+	note_played_info.frequency = notes[index];
 }
 
 

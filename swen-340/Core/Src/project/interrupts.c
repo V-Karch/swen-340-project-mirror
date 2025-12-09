@@ -1,4 +1,5 @@
 #include "interrupts.h"
+#include "input_handler.h"
 #include "project.h"
 #include <stdio.h>
 #include "main.h"

@@ -25,7 +25,7 @@ void init_systick()
 	// Set the enable bit in the CTRL (CSR) to start the timer.
 }
 
-// This fuction is to create delay using SysTick timer counter
+// This function is to create delay using SysTick timer counter
 void delay_systick()
 {
 	for (int i = 0; i < 1000000; i++) {

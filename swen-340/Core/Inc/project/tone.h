@@ -47,4 +47,11 @@ void play_tones(uint32_t index);
 void play_freq();
 
 
+typedef struct {
+	uint32_t duration;
+	float frequency;
+	uint16_t power;
+} tone_info;
+
+
 #endif /* INC_TONE_H_ */

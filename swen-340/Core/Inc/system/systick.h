@@ -25,4 +25,6 @@ typedef struct {
 // This fuction is to create delay using SysTick timer counter
 void delay_systick();
 
+uint32_t get_total_count();
+
 #endif /* INC_SYSTICK_H_ */
