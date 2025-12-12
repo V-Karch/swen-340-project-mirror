@@ -163,7 +163,7 @@ void next_song_display_debug() {
  */
 void handle_user_input(char* buffer) {
     if (buffer_reset) {
-        if (strcmp(buffer, "NEXT") == 0) next_song_display_debug();
+        if (strcmp(buffer, "NEXT") == 0) next_song_display();
         else if (strcmp(buffer, "PLAY") == 0) {
         	printf("\r\nPlay song\r\n\r\n");
         	LED_Status = 1;
