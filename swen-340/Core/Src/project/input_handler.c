@@ -172,7 +172,8 @@ void handle_user_input(char* buffer) {
 //
 //        	play_midi_song(&info, DEFAULT_PPQ);
 //        	free(info.events);
-        	speaker_test();
+        	play_song(song_number);
+        	// speaker_test();
         }
         else if (strcmp(buffer, "PAUSE") == 0) { printf("\r\nPause song\r\n\r\n"); LED_Status = 2; }
         else if (strcmp(buffer, "STOP") == 0) { printf("\r\nStop song\r\n\r\n"); LED_Status = 0; }

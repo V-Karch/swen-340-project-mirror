@@ -1,10 +1,13 @@
 #include "midi_parser.h"
 #include "systick.h"
+#include <stdlib.h>
 #include "tone.h"
 #include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
- 
+#include "tone.h"     // set_frequency() and play_freq()
+#include <math.h>
+#include "song.h"
+
 /**
  * @file midi_parser.c
  * @brief Implements MIDI data parsing utilities for extracting metadata from MIDI files.
@@ -208,4 +211,55 @@ midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
     }
 
     return info;
+}
+
+/**
+ * @brief Convert a MIDI note number (0-127) to a frequency in Hz.
+ *        A4 (MIDI 69) = 440 Hz.
+ */
+static float midi_note_to_freq(uint8_t note) {
+    return 440.0f * powf(2.0f, (note - 69) / 12.0f);
+}
+
+/**
+ * @brief Play a MIDI song using set_frequency() and play_freq().
+ *
+ * @param number Song number; used with get_song() to get song data.
+ */
+void play_song(uint8_t number) {
+    song s = get_song(number);
+    if (!s.p_song || s.size == 0) return;
+
+    midi_info info = parse_midi_meta_events(s.p_song, s.size);
+    if (!info.events || info.num_events == 0) return;
+
+    uint32_t ppq = DEFAULT_PPQ;  // Standard PPQ
+
+    for (uint32_t i = 0; i < info.num_events; i++) {
+        midi_event *ev = &info.events[i];
+
+        // Handle Note On events with non-zero velocity
+        if (!((ev->status & 0xF0) == 0x90 && ev->data[1] != 0)) {
+            float freq = midi_note_to_freq(ev->data[0]);
+            set_frequency(freq);
+        } else {
+            // Silence for Note Off or other events
+            set_frequency(0);
+        }
+
+        // Convert delta_time to microseconds
+        uint32_t wait_us = 0;
+        if (info.tempo) {
+            wait_us = (uint32_t)((double)info.tempo * ev->delta_time / ppq);
+        } else {
+            wait_us = ev->delta_time * 500;  // fallback tempo
+        }
+
+        // Busy loop calling play_freq()
+        for (uint32_t j = 0; j < wait_us / 10; j++) { // wrong unit maybe lmao
+            play_freq();
+        }
+    }
+
+    free(info.events);
 }

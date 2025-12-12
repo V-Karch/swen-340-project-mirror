@@ -46,6 +46,7 @@ uint8_t remove_tone (uint8_t note);
  */
 void play_tones(uint32_t index);
 void play_freq();
+void set_frequency(float frequency);
 
 
 typedef struct {

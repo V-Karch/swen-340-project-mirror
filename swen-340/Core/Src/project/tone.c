@@ -75,7 +75,7 @@ uint8_t remove_tone (uint8_t note) {
 
 void play_freq() {
     uint32_t rollover = hertz_to_systicks(note_played_info.frequency);
-    if ((get_total_count () % rollover) < (rollover >> 1)) { // get_total_count() is an accessor for the number of times that systick has rolled over. The count variable should be incremented every time the systick interrupts fires
+    if ((get_total_count() % rollover) < (rollover >> 1)) { // get_total_count() is an accessor for the number of times that systick has rolled over. The count variable should be incremented every time the systick interrupts fires
         DAC_Set_Value(3000); // change to adjust volume
     }
     else {
