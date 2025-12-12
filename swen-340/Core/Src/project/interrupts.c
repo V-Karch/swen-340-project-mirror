@@ -37,6 +37,7 @@ void EXTI9_5_IRQHandler() {
         S1.activate_single_press = 0;
     } else if (S1.is_pressed == 1) {
         S1.activate_single_press = 1;
+        play_song(0);
         S1.double_press_timeout = get_total_count() + 1000000;
         S1.last_push_time = get_total_count();
         return;
