@@ -40,6 +40,21 @@ void delay_systick()
 	// to do another pass in the outer loop of 10.
 }
 
+// Blocking delay in microseconds
+void delay_us(uint32_t microseconds) {
+    uint32_t start = get_counter();
+    while ((get_counter() - start) < microseconds) {
+        // Wait until the counter reaches the desired value
+    }
+}
+
+// Blocking delay in milliseconds
+void delay_ms(uint32_t milliseconds) {
+    while (milliseconds--) {
+        delay_us(1000);  // 1000 microseconds = 1 ms
+    }
+}
+
 void SysTick_Handler(void) {
 	volatile uint8_t some = (systick->SYST_CSR & (1 << 16)); // Clear on read
 

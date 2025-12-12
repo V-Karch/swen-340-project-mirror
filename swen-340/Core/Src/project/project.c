@@ -28,20 +28,10 @@ button S1 = {0};
 #include "tone.h"
 #include "dac.h"
 
-void speaker_test() {
+void run_project() {
     DAC_Init();
     DAC_Start();
-    while (1) {
-    	for (int i = 0; i < 128; i++) {
-    		play_tones(i);
-    		for (int j = 0; j < 1000; j++) {
-    			play_freq();
-    		}
-    	}
-    }
-}
 
-void run_project() {
     S1.last_push_time = 0;
     display_menu();
     printf(">>> ");
@@ -59,7 +49,5 @@ void run_project() {
         }
         handle_LED();
     }
-	// speaker_test();
 }
 
-//

@@ -23,6 +23,7 @@ void SysTick_Handler();
 uint32_t get_counter ();
 
 void reset_counter ();
+void play_tones(uint32_t index);
 
 /**
  * Utility function that converts a frequency into a Systick timer ticks.

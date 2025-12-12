@@ -1,7 +1,10 @@
 #include "midi_parser.h"
+#include "systick.h"
+#include "tone.h"
 #include <string.h>
 #include <stdio.h>
-
+#include <stdlib.h>
+ 
 /**
  * @file midi_parser.c
  * @brief Implements MIDI data parsing utilities for extracting metadata from MIDI files.
@@ -81,31 +84,42 @@ uint32_t read_var_len(const uint8_t **ptr) {
 midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
     midi_info info;
     memset(&info, 0, sizeof(info));
+    info.events = NULL;
+    info.num_events = 0;
+    uint32_t event_capacity = 0;
+
     uint8_t *ptr = data;
     uint8_t *data_end = data + size;
 
     while (ptr < data_end - 8) {
-        /* Locate a MIDI track chunk by its header "MTrk" */
         if (memcmp(ptr, "MTrk", 4) == 0) {
             ptr += 4;
 
-            /* Read the track chunk length (4 bytes, big-endian) */
-            uint32_t track_length = (ptr[0] << 24) | (ptr[1] << 16) |
-                                    (ptr[2] << 8) | ptr[3];
+            uint32_t track_length = convert_to_uint32(ptr);
             ptr += 4;
             uint8_t *track_end = ptr + track_length;
 
-            /* Parse all events within the track */
-            while (ptr < track_end) {
-                read_var_len((const uint8_t**)&ptr);  /* Skip delta-time */
+            uint8_t last_status = 0;
 
-                if (*ptr == 0xFF) {  /* Meta-event */
+            while (ptr < track_end) {
+                uint32_t delta_time = read_var_len((const uint8_t**)&ptr);
+
+                if (*ptr == 0xFF) {  // Meta-event
                     ptr++;
                     uint8_t meta_type = *ptr++;
                     uint32_t meta_length = read_var_len((const uint8_t**)&ptr);
 
+                    midi_event ev;
+                    memset(&ev, 0, sizeof(ev));
+                    ev.delta_time = delta_time;
+                    ev.type = MIDI_EVENT_META;
+                    ev.meta_type = meta_type;
+                    ev.meta_length = meta_length < MAX_META_DATA ? meta_length : MAX_META_DATA;
+                    memcpy(ev.meta_data, ptr, ev.meta_length);
+
+                    // Store special metadata
                     switch (meta_type) {
-                        case 0x02:  /**< Copyright notice */
+                        case 0x02: // Copyright
                             if (info.copyright[0] == 0) {
                                 uint32_t len = meta_length < sizeof(info.copyright) - 1 ?
                                                meta_length : sizeof(info.copyright) - 1;
@@ -113,8 +127,7 @@ midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
                                 info.copyright[len] = '\0';
                             }
                             break;
-
-                        case 0x03:  /**< Track title */
+                        case 0x03: // Track title
                             if (info.title[0] == 0) {
                                 uint32_t len = meta_length < sizeof(info.title) - 1 ?
                                                meta_length : sizeof(info.title) - 1;
@@ -122,34 +135,77 @@ midi_info parse_midi_meta_events(uint8_t *data, uint32_t size) {
                                 info.title[len] = '\0';
                             }
                             break;
-
-                        case 0x51:  /**< Tempo (3-byte value, microseconds per quarter note) */
+                        case 0x51: // Tempo
                             if (meta_length == 3 && info.tempo == 0) {
                                 info.tempo = (ptr[0] << 16) | (ptr[1] << 8) | ptr[2];
                             }
                             break;
-
                         default:
-                            /* Ignore other meta types */
                             break;
                     }
+
                     ptr += meta_length;
-                } 
-                else if (*ptr == 0xF0 || *ptr == 0xF7) {  /* SysEx event */
+
+                    // Append event
+                    if (info.num_events >= event_capacity) {
+                        event_capacity = event_capacity ? event_capacity * 2 : 64;
+                        info.events = realloc(info.events, event_capacity * sizeof(midi_event));
+                    }
+                    info.events[info.num_events++] = ev;
+
+                } else if (*ptr == 0xF0 || *ptr == 0xF7) {  // SysEx
                     ptr++;
                     uint32_t len = read_var_len((const uint8_t**)&ptr);
+
+                    midi_event ev;
+                    memset(&ev, 0, sizeof(ev));
+                    ev.delta_time = delta_time;
+                    ev.type = MIDI_EVENT_SYSEX;
+                    ev.meta_length = len < MAX_META_DATA ? len : MAX_META_DATA;
+                    memcpy(ev.meta_data, ptr, ev.meta_length);
+
                     ptr += len;
-                } 
-                else {  /* Standard MIDI event (skip over data bytes) */
+
+                    if (info.num_events >= event_capacity) {
+                        event_capacity = event_capacity ? event_capacity * 2 : 64;
+                        info.events = realloc(info.events, event_capacity * sizeof(midi_event));
+                    }
+                    info.events[info.num_events++] = ev;
+
+                } else {  // Standard MIDI event
                     uint8_t status = *ptr++;
+                    if (status < 0x80) {  // Running status
+                        ptr--;
+                        status = last_status;
+                    } else {
+                        last_status = status;
+                    }
+
                     uint8_t event_type = status >> 4;
-                    ptr += (event_type == 0xC || event_type == 0xD) ? 1 : 2;
+                    uint8_t data_bytes = (event_type == 0xC || event_type == 0xD) ? 1 : 2;
+                    uint8_t data_buf[2] = {0, 0};
+                    for (uint8_t i = 0; i < data_bytes; i++) {
+                        data_buf[i] = *ptr++;
+                    }
+
+                    midi_event ev;
+                    memset(&ev, 0, sizeof(ev));
+                    ev.delta_time = delta_time;
+                    ev.type = MIDI_EVENT_STANDARD;
+                    ev.status = status;
+                    memcpy(ev.data, data_buf, data_bytes);
+
+                    if (info.num_events >= event_capacity) {
+                        event_capacity = event_capacity ? event_capacity * 2 : 64;
+                        info.events = realloc(info.events, event_capacity * sizeof(midi_event));
+                    }
+                    info.events[info.num_events++] = ev;
                 }
             }
         } else {
-            /* Skip bytes until "MTrk" is found */
             ptr++;
         }
     }
+
     return info;
 }

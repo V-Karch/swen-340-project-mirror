@@ -25,6 +25,7 @@ static float notes[] = {
 /* Octave  8 */         4186.01, 4434.92, 4698.63, 4978.03, 5274.04, 5587.65, 5919.91, 6271.93, 6644.88, 7040.00, 7458.62, 7902.13,
 /* Octave  9 */         8372.02, 8869.84, 9397.26, 9956.06,10548.08,11175.30,11839.82,12543.86};
 
+
 static uint32_t counter = 0;
 
 tone_info note_played_info = {0, 100.0, 3000};
@@ -74,7 +75,7 @@ uint8_t remove_tone (uint8_t note) {
 
 void play_freq() {
     uint32_t rollover = hertz_to_systicks(note_played_info.frequency);
-    if ((get_total_count () % rollover) < (rollover >> 1)) { // get_count() is an accessor for the number of times that systick has rolled over. The count variable should be incremented every time the systick interrupts fires
+    if ((get_total_count () % rollover) < (rollover >> 1)) { // get_total_count() is an accessor for the number of times that systick has rolled over. The count variable should be incremented every time the systick interrupts fires
         DAC_Set_Value(3000); // change to adjust volume
     }
     else {
@@ -87,5 +88,11 @@ void play_tones(uint32_t index) {
 	note_played_info.frequency = notes[index];
 }
 
+void set_frequency(float frequency) {
+	note_played_info.frequency = frequency;
+}
 
+void set_duration(uint32_t duration) {
+	note_played_info.duration = duration;
+}
 

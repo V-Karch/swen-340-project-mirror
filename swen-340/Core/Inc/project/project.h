@@ -13,6 +13,7 @@
 #include "string.h"
 #include "song.h"
 #include "systick.h"
+#include "midi_parser.h"
 #include "LED.h"
 
 typedef struct {
@@ -35,11 +36,11 @@ typedef struct {
 	unsigned short division;
 } midi_header;
 
-typedef struct {
-    char title[128];
-    char copyright[128];
-    uint32_t tempo;  // microseconds per quarter note
-} midi_info;
+// typedef struct {
+//     char title[128];
+//     char copyright[128];
+//     uint32_t tempo;  // microseconds per quarter note
+// } midi_info;
 
 typedef struct {
 	uint32_t last_push_time;

@@ -1,9 +1,9 @@
 #include "input_handler.h"
 #include "project.h"
 #include "midi_parser.h"
+#include "tone.h"
 #include <stdio.h>
-#include <string.h>
-
+#include <stdlib.h>
 /**
  * @file input_handler.c
  * @brief Implements user input processing and command handling for the LED control project.
@@ -100,6 +100,55 @@ void next_song_display() {
     printf("Tempo: %u\r\n", (unsigned int)info.tempo);
 }
 
+
+void speaker_test() {
+	for (int i = 0; i < 128; i++) {
+		play_tones(i);
+		for (int j = 0; j < 1000; j++) {
+			play_freq();
+		}
+	}
+}
+
+void next_song_display_debug() {
+    printf("\r\nAttempting to view next song...\r\n\r\n");
+    song s = get_song(song_number);
+    song_number = (song_number == 4) ? 0 : song_number + 1;
+    midi_info info = parse_midi_meta_events(s.p_song, s.size);
+
+    printf("Title: %s\r\n", info.title);
+    printf("Copyright: %s\r\n", info.copyright);
+    printf("Tempo: %u\r\n", (unsigned int)info.tempo);
+
+    printf("\r\n--- MIDI Events ---\r\n");
+    for (uint32_t i = 0; i < info.num_events; i++) {
+        midi_event *ev = &info.events[i];
+        printf("Event %lu: Delta Time: %lu, Type: ", i, ev->delta_time);
+
+        switch (ev->type) {
+            case MIDI_EVENT_META:
+                printf("Meta, Meta Type: 0x%02X, Length: %lu, Data: ", ev->meta_type, ev->meta_length);
+                for (uint32_t j = 0; j < ev->meta_length; j++) {
+                    printf("%c", ev->meta_data[j]); // print as char
+                }
+                printf("\r\n");
+                break;
+            case MIDI_EVENT_SYSEX:
+                printf("SysEx, Length: %lu\r\n", ev->meta_length);
+                break;
+            case MIDI_EVENT_STANDARD:
+                printf("Standard, Status: 0x%02X, Data: ", ev->status);
+                for (uint8_t j = 0; j < 2; j++) {
+                    if (ev->data[j] != 0) printf("0x%02X ", ev->data[j]);
+                }
+                printf("\r\n");
+                break;
+        }
+    }
+
+    // Free allocated memory for events
+    free(info.events);
+}
 /**
  * @brief Process and execute user commands entered through the serial interface.
  *
@@ -114,8 +163,17 @@ void next_song_display() {
  */
 void handle_user_input(char* buffer) {
     if (buffer_reset) {
-        if (strcmp(buffer, "NEXT") == 0) next_song_display();
-        else if (strcmp(buffer, "PLAY") == 0) { printf("\r\nPlay song\r\n\r\n"); LED_Status = 1; }
+        if (strcmp(buffer, "NEXT") == 0) next_song_display_debug();
+        else if (strcmp(buffer, "PLAY") == 0) {
+        	printf("\r\nPlay song\r\n\r\n");
+        	LED_Status = 1;
+//        	song s = get_song(song_number);
+//        	midi_info info = parse_midi_meta_events(s.p_song, s.size);
+//
+//        	play_midi_song(&info, DEFAULT_PPQ);
+//        	free(info.events);
+        	speaker_test();
+        }
         else if (strcmp(buffer, "PAUSE") == 0) { printf("\r\nPause song\r\n\r\n"); LED_Status = 2; }
         else if (strcmp(buffer, "STOP") == 0) { printf("\r\nStop song\r\n\r\n"); LED_Status = 0; }
         else if (strcmp(buffer, "HELP") == 0) display_menu();
