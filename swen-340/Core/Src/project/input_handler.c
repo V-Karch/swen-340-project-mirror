@@ -167,13 +167,7 @@ void handle_user_input(char* buffer) {
         else if (strcmp(buffer, "PLAY") == 0) {
         	printf("\r\nPlay song\r\n\r\n");
         	LED_Status = 1;
-//        	song s = get_song(song_number);
-//        	midi_info info = parse_midi_meta_events(s.p_song, s.size);
-//
-//        	play_midi_song(&info, DEFAULT_PPQ);
-//        	free(info.events);
         	play_song(song_number);
-        	// speaker_test();
         }
         else if (strcmp(buffer, "PAUSE") == 0) { printf("\r\nPause song\r\n\r\n"); LED_Status = 2; }
         else if (strcmp(buffer, "STOP") == 0) { printf("\r\nStop song\r\n\r\n"); LED_Status = 0; }
